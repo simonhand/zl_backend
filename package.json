@@ -1,0 +1,21 @@
+{
+  "name": "zl_backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "supervisor ./src/app.js"
+  },
+  "dependencies": {
+    "apollo-server": "^3.6.1",
+    "apollo-server-core": "^3.6.1",
+    "apollo-server-koa": "^3.6.1",
+    "graphql": "^16.2.0",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^10.1.1",
+    "koa-static": "^5.0.0",
+    "mongoose": "^6.1.4",
+    "supervisor": "^0.12.0"
+  }
+}
