@@ -12,7 +12,7 @@ const {
 } = require('./graphql/schema');
 require('./mongodb')
 
-
+console.log("zhangle-----???>>>>>");
 
 const router = new Router;
 router.use(routerMap.routes());
