@@ -1,3 +1,4 @@
+require('./mongodb')
 const Koa = require('koa');
 const KoaStatic = require('koa-static');
 const routerMap = require('./router');
@@ -10,7 +11,7 @@ const {
   typeDefs,
   resolvers
 } = require('./graphql/schema');
-require('./mongodb')
+
 
 console.log("zhangle-----???>>>>>");
 

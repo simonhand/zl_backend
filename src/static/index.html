@@ -10,15 +10,36 @@
   <div>
     hellow zhangle
   </div>
+  <div>
+    <form action="" id="registerForm">
+      <input type="text" name="uname" />
+      <input type="password" name="pwd" />
+      <input type="number" name="classNo"/>
+      <button type="submit">注册</button>
+    </form>
+  </div>
   <script>
-    const payload = JSON.stringify({
+    const registerForm = document.getElementById('registerForm');
+    registerForm.addEventListener("submit",(e) => {
+      e.preventDefault();
+
+      const uname = registerForm['uname'].value;
+      const pwd = registerForm['pwd'].value;
+      const classNo = registerForm['classNo'].value.toString();
+      console.log('classNo: ', classNo);
+      const payload = JSON.stringify({
       query:`
-        query{
-          books{
-            title
-            author
+          mutation {
+            setUser(post:{
+              uname: "${uname}",
+              pwd:"${pwd}",
+              classNo: "${classNo}"
+            }){
+                uname,
+                pwd,
+                classNo
+            }
           }
-        }
       `
     })
     fetch('/graphql',{
@@ -28,6 +49,24 @@
       },
       body:payload
     })
+    })
+    // const payload = JSON.stringify({
+    //   query:`
+    //     query{
+    //       books{
+    //         title
+    //         author
+    //       }
+    //     }
+    //   `
+    // })
+    // fetch('/graphql',{
+    //   method:"POST",
+    //   headers:{
+    //     "Content-Type": "application/json"
+    //   },
+    //   body:payload
+    // })
   </script>
 </body>
 </html>

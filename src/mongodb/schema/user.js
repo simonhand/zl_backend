@@ -3,10 +3,10 @@ const { Schema } = mongoose;
 
 const UserSchema = new Schema({
   uname: String,
-  pword: String,
+  pwd: String,
   utoken: String,
   class: String,
-  classNo: Number,
+  classNo: String,
   meta: {
     createdAt:{
       type:Date,
@@ -19,7 +19,7 @@ const UserSchema = new Schema({
   }
 });
 
-UserSchema.prototype('save',function(next) {
+UserSchema.pre('save',function(next) {
   if(this.isNew){
     this.meta.createdAt = this.meta.updateAt = Date.now();
   }{

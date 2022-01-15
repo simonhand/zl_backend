@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "supervisor ./src/app.js"
+    "start": "supervisor ./src/app.js",
+    "dev": "node ./src/app.js"
   },
   "dependencies": {
     "apollo-server": "^3.6.1",
