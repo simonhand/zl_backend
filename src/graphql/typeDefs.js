@@ -25,10 +25,12 @@ const typeDefs = gql`
     users:[User]
     loginuser(uname:String,pwd:String):User
     checkuser(uname:String,openId:String):User
+    
   }
 
   type Mutation{
     setUser(post: UserInput): User
+    updateUserInfo(post: UpdateUserInfoInput):User
   }
 
   input UserInput {
@@ -39,6 +41,11 @@ const typeDefs = gql`
     avatarUrl: String,
     openid: String,
     isWxUser:Boolean,
+  }
+
+  input UpdateUserInfoInput{
+    _id: String!
+    avatarUrl:String
   }
 `;
 

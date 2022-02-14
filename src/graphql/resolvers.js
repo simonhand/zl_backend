@@ -27,13 +27,11 @@ const resolvers = {
     loginuser: async (parent, args, context, info) => {
       console.log('args: ', typeof(args));
       const res = await UserModle.findOne(args);
-      console.log('res: ', res);
       return res;
     },
     checkuser: async (parent, args, context, info) => {
       console.log('args: ', typeof(args));
       const res = await UserModle.findOne(args);
-      console.log('res: ', res);
       return res;
     },
   },
@@ -42,6 +40,13 @@ const resolvers = {
       const { uname, pwd,classNo,openid,avatarUrl,isWxUser,nickName} = args.post;
       return UserModle.create( { uname, pwd ,classNo,openid,avatarUrl,isWxUser,nickName });
     },
+    updateUserInfo:async (parent,args,context) => {
+      const { avatarUrl,_id } = args.post;
+      return await UserModle.updateOne(
+        {_id}, // 查询条件
+        {avatarUrl} // 变更字段
+      )
+    }
   }
 };
 

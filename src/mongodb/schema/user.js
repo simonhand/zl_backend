@@ -8,6 +8,7 @@ const UserSchema = new Schema({
   class: String,
   classNo: String,
   nickName:String,
+  realName:String,
   avatarUrl: String,
   openid: String,
   isWxUser:Boolean,
