@@ -13,7 +13,7 @@ const {
 } = require('./graphql/schema');
 
 
-console.log("zhangle-----???>>>>>");
+console.log("zhangle>>>>>");
 
 const router = new Router;
 router.use(routerMap.routes());
