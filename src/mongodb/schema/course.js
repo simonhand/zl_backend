@@ -3,18 +3,13 @@ const {
   Schema
 } = mongoose;
 
-const UserSchema = new Schema({
-  uname: String,
-  pwd: String,
-  utoken: String,
-  class: String,
-  classNo: String,
-  nickName: String,
-  realName: String,
-  avatarUrl: String,
-  openid: String,
-  isWxUser: Boolean,
-  userType: Number,
+const CourseSchema = new Schema({
+  createrAvatarUrl: String,
+  createrId: String,
+  courseName: String,
+  teacherName: String,
+  invitationCode: String,
+  students: [Object],
   meta: {
     createdAt: {
       type: Date,
@@ -27,7 +22,7 @@ const UserSchema = new Schema({
   }
 });
 
-UserSchema.pre('save', function (next) {
+CourseSchema.pre('save', function (next) {
   if (this.isNew) {
     this.meta.createdAt = this.meta.updateAt = Date.now();
   } {
@@ -36,4 +31,4 @@ UserSchema.pre('save', function (next) {
   next();
 });
 
-mongoose.model("User", UserSchema);
+mongoose.model("Course", CourseSchema);

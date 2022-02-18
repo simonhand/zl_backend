@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 require("./schema/user");
-require("./schema/wxuser");
+require("./schema/course");
 main().catch(err => console.log("err+zhangle",err));
 
 async function main() {
