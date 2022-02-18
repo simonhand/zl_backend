@@ -1,6 +1,8 @@
-const { gql } = require('apollo-server-koa');
+const {
+  gql
+} = require('apollo-server-koa');
 // zhangle dataType.
-const typeDefs = gql`
+const typeDefs = gql `
 
   type User {
     _id:String,
@@ -15,13 +17,16 @@ const typeDefs = gql`
     isWxUser:Boolean,
   }
 
-  type Book {
-    title: String
-    author: String
+  type Course{
+    createrAvatarUrl: String,
+    createrId: String,
+    courseName: String,
+    teacherName:String,
+    invitationCode:String,
+    students:String,
   }
 
   type Query {
-    books: [Book]
     users:[User]
     loginuser(uname:String,pwd:String):User
     checkuser(uname:String,openId:String):User
@@ -31,6 +36,7 @@ const typeDefs = gql`
   type Mutation{
     setUser(post: UserInput): User
     updateUserInfo(post: UpdateUserInfoInput):User
+    createCourse(post: CourseInput):Course
   }
 
   input UserInput {
@@ -46,6 +52,14 @@ const typeDefs = gql`
   input UpdateUserInfoInput{
     _id: String!
     avatarUrl:String
+  }
+
+  input CourseInput {
+    createrAvatarUrl: String,
+    createrId: String,
+    courseName: String,
+    teacherName:String,
+    invitationCode:String,
   }
 `;
 
