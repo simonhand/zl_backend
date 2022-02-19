@@ -18,19 +18,20 @@ const typeDefs = gql `
   }
 
   type Course{
+    _id:String,
     createrAvatarUrl: String,
     createrId: String,
     courseName: String,
     teacherName:String,
     invitationCode:String,
-    students:String,
+    students:[String],
   }
 
   type Query {
     users:[User]
     loginuser(uname:String,pwd:String):User
     checkuser(uname:String,openId:String):User
-    
+    queryCourse(createrId:String!):[Course]
   }
 
   type Mutation{

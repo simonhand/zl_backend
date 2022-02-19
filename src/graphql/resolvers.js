@@ -19,6 +19,13 @@ const resolvers = {
       const res = await UserModle.findOne(args);
       return res;
     },
+    queryCourse: async (parent, args, context) => {
+      const res = await CourseModle.find({
+        ...args
+      });
+      console.log("res", res);
+      return res;
+    }
   },
   Mutation: {
     setUser: (parent, args, context) => {
