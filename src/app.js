@@ -4,8 +4,12 @@ const KoaStatic = require('koa-static');
 const routerMap = require('./router');
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
-const { ApolloServer } = require('apollo-server-koa');
-const { ApolloServerPluginDrainHttpServer } = require('apollo-server-core');
+const {
+  ApolloServer
+} = require('apollo-server-koa');
+const {
+  ApolloServerPluginDrainHttpServer
+} = require('apollo-server-core');
 const http = require('http');
 const {
   typeDefs,
@@ -22,24 +26,34 @@ const app = new Koa;
 app.use(KoaStatic(`${__dirname}/static`));
 app.use(router.routes()).use(router.allowedMethods());
 
-async function startApolloServer(app,typeDefs, resolvers) {
+async function startApolloServer(app, typeDefs, resolvers) {
   const httpServer = http.createServer();
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    plugins: [ApolloServerPluginDrainHttpServer({
+      httpServer
+    })],
   });
 
   await server.start();
-  server.applyMiddleware({ app });
+  server.applyMiddleware({
+    app
+  });
   httpServer.on('request', app.callback());
-  await new Promise(resolve => httpServer.listen({url: "192.168.2.110", port: 3000 }, resolve));
+  await new Promise(resolve => httpServer.listen({
+    url: "192.168.0.3",
+    port: 3000
+  }, resolve));
   console.log(`🚀 Server ready at http://localhost:3000${server.graphqlPath}`);
   console.log(`🚀 Server ready at http://192.168.2.110:3000${server.graphqlPath}`);
-  return { server, app };
+  return {
+    server,
+    app
+  };
 }
 
-startApolloServer(app,typeDefs,resolvers);
+startApolloServer(app, typeDefs, resolvers);
 
 // app.listen(3000,()=> {
 //   console.log("http://localhost:3000");

@@ -25,6 +25,31 @@ const resolvers = {
       });
       console.log("res", res);
       return res;
+    },
+    addCourse: async (parent, args, context, info) => {
+      const CourseRes = await CourseModle.findOne({
+        invitationCode: args.invitationCode
+      })
+      const {
+        _id,
+        createrAvatarUrl,
+        courseName,
+        teacherName
+      } = CourseRes;
+      const res = await UserModle.updateOne({
+        _id: args._id
+      }, {
+        $push: {
+          "course": {
+            _id,
+            createrAvatarUrl,
+            courseName,
+            teacherName
+          }
+        }
+      })
+      console.log(res);
+      return CourseRes;
     }
   },
   Mutation: {
