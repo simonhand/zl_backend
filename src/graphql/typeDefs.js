@@ -15,6 +15,7 @@ const typeDefs = gql `
     avatarUrl: String,
     openid: String,
     isWxUser:Boolean,
+    course:[String]
   }
 
   type Course{
@@ -32,6 +33,7 @@ const typeDefs = gql `
     loginuser(uname:String,pwd:String):User
     checkuser(uname:String,openId:String):User
     queryCourse(createrId:String!):[Course]
+    addCourse(invitationCode:String!,_id:String!):Course
   }
 
   type Mutation{

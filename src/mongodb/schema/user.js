@@ -15,6 +15,7 @@ const UserSchema = new Schema({
   openid: String,
   isWxUser: Boolean,
   userType: Number,
+  course: [Object],
   meta: {
     createdAt: {
       type: Date,
@@ -33,6 +34,7 @@ UserSchema.pre('save', function (next) {
   } {
     this.meta.updateAt = Date.now();
   }
+  this.course = []
   next();
 });
 
