@@ -34,7 +34,7 @@ UserSchema.pre('save', function (next) {
   } {
     this.meta.updateAt = Date.now();
   }
-  this.course = []
+  this.course = [];
   next();
 });
 

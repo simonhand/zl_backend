@@ -20,6 +20,7 @@ const resolvers = {
       return res;
     },
     queryCourse: async (parent, args, context) => {
+      console.log('args: ', args);
       const res = await CourseModle.find({
         ...args
       });
@@ -27,29 +28,41 @@ const resolvers = {
       return res;
     },
     addCourse: async (parent, args, context, info) => {
-      const CourseRes = await CourseModle.findOne({
-        invitationCode: args.invitationCode
-      })
       const {
         _id,
-        createrAvatarUrl,
-        courseName,
-        teacherName
-      } = CourseRes;
-      const res = await UserModle.updateOne({
+        uname,
+        avatarUrl,
+        nickName,
+        realname = ""
+      } = await UserModle.findOne({
         _id: args._id
+      });
+      await UserModle.updateOne({
+        _id
       }, {
         $push: {
-          "course": {
-            _id,
-            createrAvatarUrl,
-            courseName,
-            teacherName
+          course: {
+            invitationCode: args.invitationCode
           }
         }
       })
-      console.log(res);
-      return CourseRes;
+      const CourseRes = await CourseModle.updateOne({
+        invitationCode: args.invitationCode
+      }, {
+        $push: {
+          students: {
+            _id,
+            uname,
+            avatarUrl,
+            nickName,
+            realname
+          }
+        }
+      })
+      const addRes = await CourseModle.findOne({
+        invitationCode: args.invitationCode
+      })
+      return addRes;
     }
   },
   Mutation: {
@@ -63,6 +76,17 @@ const resolvers = {
         isWxUser,
         nickName
       } = args.post;
+      if (isWxUser) {
+        return UserModle.create({
+          uname: nickName,
+          pwd,
+          classNo,
+          openid,
+          avatarUrl,
+          isWxUser,
+          nickName
+        });
+      }
       return UserModle.create({
         uname,
         pwd,
@@ -100,7 +124,6 @@ const resolvers = {
         courseName,
         teacherName,
         invitationCode,
-
       });
     }
   }
