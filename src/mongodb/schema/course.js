@@ -10,6 +10,7 @@ const CourseSchema = new Schema({
   teacherName: String,
   invitationCode: String,
   students: [Object],
+  studentsNumber: Number,
   meta: {
     createdAt: {
       type: Date,
@@ -30,5 +31,8 @@ CourseSchema.pre('save', function (next) {
   }
   next();
 });
+CourseSchema.post('save', () => {
+  this.studentsNumber = this.students.length
+})
 
 mongoose.model("Course", CourseSchema);
