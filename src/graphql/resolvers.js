@@ -16,15 +16,28 @@ const resolvers = {
       return res;
     },
     checkuser: async (parent, args, context, info) => {
-      const res = await UserModle.findOne(args);
+      console.log('args: ', args);
+      let condition;
+      if (!args.uname) {
+        condition = {
+          openId: args.openId
+        }
+      } else {
+        condition = {
+          ...args
+        }
+      }
+      console.log('condition: ', condition);
+      const res = await UserModle.findOne(condition);
+      console.log('res: ', res);
       return res;
     },
     queryCourse: async (parent, args, context) => {
-      console.log('args: ', args);
+      // console.log('args: ', args);
       const res = await CourseModle.find({
         ...args
       });
-      console.log("res", res);
+      // console.log("res", res);
       return res;
     },
     addCourse: async (parent, args, context, info) => {
@@ -46,7 +59,13 @@ const resolvers = {
           }
         }
       })
-      const CourseRes = await CourseModle.updateOne({
+      const addRes = await CourseModle.findOne({
+        invitationCode: args.invitationCode
+      })
+      const {
+        studentsNumber
+      } = addRes;
+      CourseModle.updateOne({
         invitationCode: args.invitationCode
       }, {
         $push: {
@@ -57,10 +76,10 @@ const resolvers = {
             nickName,
             realname
           }
-        }
-      })
-      const addRes = await CourseModle.findOne({
-        invitationCode: args.invitationCode
+        },
+        studentsNumber: (studentsNumber + 1)
+      }, (e, r) => {
+        console.log(r);
       })
       return addRes;
     }
@@ -71,7 +90,7 @@ const resolvers = {
         uname,
         pwd,
         classNo,
-        openid,
+        openId,
         avatarUrl,
         isWxUser,
         nickName
@@ -81,7 +100,7 @@ const resolvers = {
           uname: nickName,
           pwd,
           classNo,
-          openid,
+          openId,
           avatarUrl,
           isWxUser,
           nickName
@@ -91,7 +110,7 @@ const resolvers = {
         uname,
         pwd,
         classNo,
-        openid,
+        openId,
         avatarUrl,
         isWxUser,
         nickName

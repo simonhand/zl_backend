@@ -1,15 +1,13 @@
 const {
   gql
 } = require('apollo-server-koa');
-const {
-  studentsCourse
-} = require('./graphqlType')
+
 // zhangle dataType.
 const typeDefs = gql `
 
-  # type studentsCourse{
-  #   invitationCode:String
-  # }
+  type UserCourse{
+    invitationCode:String
+  }
 
   type User {
     _id:String,
@@ -22,7 +20,7 @@ const typeDefs = gql `
     avatarUrl: String,
     openid: String,
     isWxUser:Boolean,
-    course:[String]
+    course:[UserCourse]
   }
 
   type Course{
