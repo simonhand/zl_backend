@@ -29,10 +29,9 @@ CourseSchema.pre('save', function (next) {
   } {
     this.meta.updateAt = Date.now();
   }
+  this.studentsNumber = this.students.length
   next();
 });
-CourseSchema.post('save', () => {
-  this.studentsNumber = this.students.length
-})
+
 
 mongoose.model("Course", CourseSchema);

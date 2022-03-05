@@ -18,7 +18,7 @@ const typeDefs = gql `
     classNo: String,
     nickName:String,
     avatarUrl: String,
-    openid: String,
+    openId: String,
     isWxUser:Boolean,
     course:[UserCourse]
   }
@@ -30,7 +30,8 @@ const typeDefs = gql `
     courseName: String,
     teacherName:String,
     invitationCode:String,
-    students:[String],
+    students:[User],
+    studentsNumber:Int,
   }
 
   type QueryResult{
@@ -46,6 +47,7 @@ const typeDefs = gql `
     loginuser(uname:String,pwd:String):User
     checkuser(uname:String,openId:String):User
     queryCourse(createrId:String!):[Course]
+    queryStudentCourse(_id:String):[Course]
     addCourse(invitationCode:String!,_id:String!):Course
   }
 
@@ -61,7 +63,7 @@ const typeDefs = gql `
     classNo: String,
     nickName:String,
     avatarUrl: String,
-    openid: String,
+    openId: String,
     isWxUser:Boolean,
   }
 
