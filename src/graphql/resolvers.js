@@ -16,7 +16,6 @@ const resolvers = {
       return res;
     },
     checkuser: async (parent, args, context, info) => {
-      console.log('args: ', args);
       let condition;
       if (!args.uname) {
         condition = {
@@ -27,18 +26,22 @@ const resolvers = {
           ...args
         }
       }
-      console.log('condition: ', condition);
       const res = await UserModle.findOne(condition);
-      console.log('res: ', res);
       return res;
     },
     queryCourse: async (parent, args, context) => {
-      // console.log('args: ', args);
+      console.log('args: ', args);
       const res = await CourseModle.find({
         ...args
       });
-      // console.log("res", res);
       return res;
+    },
+    queryStudentCourse: async (parent, args, context) => {
+      const res = await CourseModle.find({
+        'students' : {$elemMatch: {_id:mongoose.Types.ObjectId(args._id)}}
+      })
+      console.log('res: ', res);
+      return res
     },
     addCourse: async (parent, args, context, info) => {
       const {
@@ -79,7 +82,7 @@ const resolvers = {
         },
         studentsNumber: (studentsNumber + 1)
       }, (e, r) => {
-        console.log(r);
+        
       })
       return addRes;
     }
@@ -145,7 +148,7 @@ const resolvers = {
         invitationCode,
       });
     }
-  }
+  } 
 };
 
 module.exports = resolvers;

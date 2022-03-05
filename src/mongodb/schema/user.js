@@ -12,10 +12,11 @@ const UserSchema = new Schema({
   nickName: String,
   realName: String,
   avatarUrl: String,
-  openid: String,
+  openId: String,
   isWxUser: Boolean,
   userType: Number,
   course: [Object],
+  studyCourse:[Object],
   meta: {
     createdAt: {
       type: Date,
