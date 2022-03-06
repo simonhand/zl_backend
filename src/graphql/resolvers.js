@@ -3,7 +3,7 @@ const UserModle = mongoose.model('User');
 const CourseModle = mongoose.model('Course');
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
-
+const ObjectId = mongoose.Types.ObjectId
 
 const resolvers = {
   Query: {
@@ -38,7 +38,11 @@ const resolvers = {
     },
     queryStudentCourse: async (parent, args, context) => {
       const res = await CourseModle.find({
-        'students' : {$elemMatch: {_id:mongoose.Types.ObjectId(args._id)}}
+        'students': {
+          $elemMatch: {
+            _id: ObjectId(args._id)
+          }
+        }
       })
       console.log('res: ', res);
       return res
@@ -53,18 +57,22 @@ const resolvers = {
       } = await UserModle.findOne({
         _id: args._id
       });
-      await UserModle.updateOne({
-        _id
-      }, {
-        $push: {
-          course: {
-            invitationCode: args.invitationCode
-          }
-        }
-      })
+      
       const addRes = await CourseModle.findOne({
         invitationCode: args.invitationCode
       })
+      // addRes如果有该课程就继续更新user表
+      if (addRes) {
+        await UserModle.updateOne({
+          _id
+        }, {
+          $push: {
+            course: {
+              invitationCode: args.invitationCode
+            }
+          }
+        })
+      }
       const {
         studentsNumber
       } = addRes;
@@ -82,10 +90,50 @@ const resolvers = {
         },
         studentsNumber: (studentsNumber + 1)
       }, (e, r) => {
-        
+
       })
       return addRes;
-    }
+    },
+    deleteCourse: async (parent, args, context, info) => {
+      const {
+        userId,
+        userType,
+        courseId,
+        invitationCode
+      } = args;
+      let res1;
+      let res2;
+      console.log('invitationCode: ', invitationCode);
+      if (userType) {
+        // 这里处理学生退出课程
+        res1 = await CourseModle.updateOne({
+          _id: ObjectId(courseId)
+        }, {
+          $pull: {
+            students: {
+              _id: ObjectId(userId)
+            }
+          },
+          $inc: {
+            studentsNumber: -1
+          }
+        })
+        res2 = await UserModle.updateOne({
+          _id:ObjectId(userId)
+        },{
+          $pull:{
+            course:{
+              invitationCode:invitationCode
+            }
+          }
+        })
+      } else {
+        // 这里处理教师解散课程
+      }
+
+      console.log('res: ', res1,res2);
+      return { }
+    },
   },
   Mutation: {
     setUser: (parent, args, context) => {
@@ -148,7 +196,7 @@ const resolvers = {
         invitationCode,
       });
     }
-  } 
+  }
 };
 
 module.exports = resolvers;

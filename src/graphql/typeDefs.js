@@ -47,8 +47,9 @@ const typeDefs = gql `
     loginuser(uname:String,pwd:String):User
     checkuser(uname:String,openId:String):User
     queryCourse(createrId:String!):[Course]
-    queryStudentCourse(_id:String):[Course]
+    queryStudentCourse(_id:String!):[Course]
     addCourse(invitationCode:String!,_id:String!):Course
+    deleteCourse(userId:String!,userType:Int!,courseId:String!,invitationCode:String!):QueryResult
   }
 
   type Mutation{
