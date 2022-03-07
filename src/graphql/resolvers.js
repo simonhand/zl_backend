@@ -30,7 +30,7 @@ const resolvers = {
       return res;
     },
     queryCourse: async (parent, args, context) => {
-      console.log('args: ', args);
+
       const res = await CourseModle.find({
         ...args
       });
@@ -44,7 +44,7 @@ const resolvers = {
           }
         }
       })
-      console.log('res: ', res);
+
       return res
     },
     addCourse: async (parent, args, context, info) => {
@@ -57,7 +57,7 @@ const resolvers = {
       } = await UserModle.findOne({
         _id: args._id
       });
-      
+
       const addRes = await CourseModle.findOne({
         invitationCode: args.invitationCode
       })
@@ -103,7 +103,7 @@ const resolvers = {
       } = args;
       let res1;
       let res2;
-      console.log('invitationCode: ', invitationCode);
+
       if (userType) {
         // 这里处理学生退出课程
         res1 = await CourseModle.updateOne({
@@ -119,20 +119,32 @@ const resolvers = {
           }
         })
         res2 = await UserModle.updateOne({
-          _id:ObjectId(userId)
-        },{
-          $pull:{
-            course:{
-              invitationCode:invitationCode
+          _id: ObjectId(userId)
+        }, {
+          $pull: {
+            course: {
+              invitationCode: invitationCode
             }
           }
         })
       } else {
         // 这里处理教师解散课程
+        res1 = await CourseModle.remove({
+          _id: ObjectId(courseId)
+        })
+        res2 = await UserModle.update({
+          course: {
+            invitationCode
+          }
+        }, {
+          $pull: {
+            course: {
+              invitationCode
+            }
+          }
+        })
       }
-
-      console.log('res: ', res1,res2);
-      return { }
+      return {}
     },
   },
   Mutation: {
