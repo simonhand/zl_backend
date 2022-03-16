@@ -18,8 +18,14 @@ const typeDefs = gql `
     classNo: String,
     nickName:String,
     avatarUrl: String,
+    realName:String,
     openId: String,
+    userType:Int,
     isWxUser:Boolean,
+    gender:String,
+    grade:String,
+    phone:String,
+    age:String,
     course:[UserCourse]
   }
 
@@ -50,6 +56,8 @@ const typeDefs = gql `
     queryStudentCourse(_id:String!):[Course]
     addCourse(invitationCode:String!,_id:String!):Course
     deleteCourse(userId:String!,userType:Int!,courseId:String!,invitationCode:String!):QueryResult
+    updateUserInfomation(_id:String!, avatarUrl:String,realName:String,nickName:String,age:String grade:String,
+        gender:String,phone:String,userType:Int):User
   }
 
   type Mutation{
@@ -66,6 +74,11 @@ const typeDefs = gql `
     avatarUrl: String,
     openId: String,
     isWxUser:Boolean,
+    realName:String,
+    age:String,
+    grade:String,
+    gender:String,
+    phone:String
   }
 
   input UpdateUserInfoInput{
