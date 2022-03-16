@@ -15,6 +15,10 @@ const UserSchema = new Schema({
   openId: String,
   isWxUser: Boolean,
   userType: Number,
+  gender:String,
+  grade:String,
+  phone:String,
+  age:String,
   course: [Object],
   studyCourse:[Object],
   meta: {
@@ -31,11 +35,12 @@ const UserSchema = new Schema({
 
 UserSchema.pre('save', function (next) {
   if (this.isNew) {
+    this.course = [];
+    this.userType = 1;
     this.meta.createdAt = this.meta.updateAt = Date.now();
   } {
     this.meta.updateAt = Date.now();
   }
-  this.course = [];
   next();
 });
 

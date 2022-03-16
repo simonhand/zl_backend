@@ -146,6 +146,40 @@ const resolvers = {
       }
       return {}
     },
+    // 变更用户基本资料
+    updateUserInfomation: async (parent, args, context, info) => {
+      const {
+        _id,
+        avatarUrl,
+        realName,
+        nickName,
+        age,
+        grade,
+        gender,
+        phone,
+        userType
+      } = args;
+      console.log('args: ', args);
+      const res = await UserModle.updateOne({
+        _id
+      }, {
+        $set: {
+          avatarUrl,
+          realName,
+          nickName,
+          age,
+          grade,
+          gender,
+          phone,
+          userType
+        }
+      }, {
+        upsert: true
+      });
+      return UserModle.findOne({
+       _id
+      });
+    }
   },
   Mutation: {
     setUser: (parent, args, context) => {
@@ -156,8 +190,14 @@ const resolvers = {
         openId,
         avatarUrl,
         isWxUser,
-        nickName
+        nickName,
+        realName,
+        age,
+        grade,
+        gender,
+        phone
       } = args.post;
+      console.log('args.post: ', args.post);
       if (isWxUser) {
         return UserModle.create({
           uname: nickName,
@@ -166,7 +206,12 @@ const resolvers = {
           openId,
           avatarUrl,
           isWxUser,
-          nickName
+          nickName,
+          realName,
+          age,
+          grade,
+          gender,
+          phone
         });
       }
       return UserModle.create({
@@ -176,7 +221,12 @@ const resolvers = {
         openId,
         avatarUrl,
         isWxUser,
-        nickName
+        nickName,
+        realName,
+        age,
+        grade,
+        gender,
+        phone
       });
     },
     updateUserInfo: async (parent, args, context) => {
