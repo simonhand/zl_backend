@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const UserModle = mongoose.model('User');
 const CourseModle = mongoose.model('Course');
+const ExerciseModle = mongoose.model('Exercise')
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
 const ObjectId = mongoose.Types.ObjectId
@@ -159,7 +160,6 @@ const resolvers = {
         phone,
         userType
       } = args;
-      console.log('args: ', args);
       const res = await UserModle.updateOne({
         _id
       }, {
@@ -179,6 +179,20 @@ const resolvers = {
       return UserModle.findOne({
        _id
       });
+    },
+    createExercise:(parent, args, context) => {
+      const { createrAvatarUrl,createrId,course_id,courseName,teacherName,invitationCode} = args;
+      // 别问，问就是：代码越怪，运行越快；GrapQL不知道JSON.string前端的",模板字符串也没把“ " ”转义成 “ \" ”，只能这么怪搞
+      const realExerciseList = JSON.parse(args.exerciseList.replace(/\+z\&l\+/g,"\""));
+      return ExerciseModle.create({
+        createrAvatarUrl,
+        createrId,
+        course_id,
+        courseName,
+        teacherName,
+        invitationCode,
+        exerciseList:realExerciseList
+      })
     }
   },
   Mutation: {
@@ -257,7 +271,8 @@ const resolvers = {
         teacherName,
         invitationCode,
       });
-    }
+    },
+   
   }
 };
 

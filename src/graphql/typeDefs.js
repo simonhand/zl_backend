@@ -28,7 +28,28 @@ const typeDefs = gql `
     age:String,
     course:[UserCourse]
   }
-
+  type Key{
+    keyIndex:String
+    keyValue:String
+    trueKey:Boolean
+  }
+  type Exercises{
+    iscorrectExerciseType:Boolean,
+    textArea:String,
+    imgList:[String],
+    keyList:[Key],
+    exercisesType:Int,
+    exercisesIndex:String
+  }
+  type CreateExercisesList{
+    createrAvatarUrl: String,
+    createrId: String,
+    course_id:String,
+    courseName: String,
+    teacherName: String,
+    invitationCode: String,
+    exerciseList:[Exercises]
+  }
   type Course{
     _id:String,
     createrAvatarUrl: String,
@@ -56,8 +77,8 @@ const typeDefs = gql `
     queryStudentCourse(_id:String!):[Course]
     addCourse(invitationCode:String!,_id:String!):Course
     deleteCourse(userId:String!,userType:Int!,courseId:String!,invitationCode:String!):QueryResult
-    updateUserInfomation(_id:String!, avatarUrl:String,realName:String,nickName:String,age:String grade:String,
-        gender:String,phone:String,userType:Int):User
+    updateUserInfomation(_id:String!, avatarUrl:String,realName:String,nickName:String,age:String grade:String,gender:String,phone:String,userType:Int):User
+    createExercise(createrAvatarUrl: String,createrId: String,course_id:String,courseName: String,teacherName: String,invitationCode: String,exerciseList:String):CreateExercisesList
   }
 
   type Mutation{
@@ -85,13 +106,26 @@ const typeDefs = gql `
     _id: String!
     avatarUrl:String
   }
-
+  
   input CourseInput {
     createrAvatarUrl: String,
     createrId: String,
     courseName: String,
     teacherName:String,
     invitationCode:String,
+  }
+  input KeyInput{
+    keyIndex:String
+    keyValue:String
+    trueKey:Boolean
+  }
+  input ExercisesInput {
+    iscorrectExerciseType:Boolean,
+    textArea:String,
+    imgList:[String],
+    keyList:[KeyInput],
+    exercisesType:Int,
+    exercisesIndex:String
   }
 `;
 
