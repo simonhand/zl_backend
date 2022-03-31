@@ -71,6 +71,7 @@ const typeDefs = gql `
 
   type Query {
     users:[User]
+    examIndex(invitationCodeList:[String]):[CreateExercisesList]
     loginuser(uname:String,pwd:String):User
     checkuser(uname:String,openId:String):User
     queryCourse(createrId:String!):[Course]

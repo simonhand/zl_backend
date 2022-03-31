@@ -193,6 +193,10 @@ const resolvers = {
         invitationCode,
         exerciseList:realExerciseList
       })
+    },
+    examIndex:(parent, args, context) =>{
+      console.log('args: ', args);
+      // args:
     }
   },
   Mutation: {
