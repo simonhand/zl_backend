@@ -8,7 +8,10 @@ const typeDefs = gql `
   type UserCourse{
     invitationCode:String
   }
-
+  type meta {
+    createdAt:String,
+    updateAt:String
+  }
   type User {
     _id:String,
     uname: String,
@@ -42,6 +45,7 @@ const typeDefs = gql `
     exercisesIndex:String
   }
   type CreateExercisesList{
+    _id:String,
     createrAvatarUrl: String,
     createrId: String,
     course_id:String,
@@ -49,6 +53,7 @@ const typeDefs = gql `
     teacherName: String,
     invitationCode: String,
     exerciseList:[Exercises]
+    meta:meta
   }
   type Course{
     _id:String,

@@ -194,9 +194,12 @@ const resolvers = {
         exerciseList:realExerciseList
       })
     },
-    examIndex:(parent, args, context) =>{
-      console.log('args: ', args);
-      // args:
+    examIndex:async (parent, args, context) =>{
+      const queryList = args.invitationCodeList.map((item) => {
+        return { invitationCode:item }
+      })
+      const realRes =await ExerciseModle.find({$or:queryList})
+      return realRes
     }
   },
   Mutation: {
