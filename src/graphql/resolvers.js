@@ -1,7 +1,11 @@
+const {
+  zlDecodeList
+} = require('../utils/utils')
 const mongoose = require('mongoose');
 const UserModle = mongoose.model('User');
 const CourseModle = mongoose.model('Course');
-const ExerciseModle = mongoose.model('Exercise')
+const ExerciseModle = mongoose.model('Exercise');
+const ExerciseRecordModle = mongoose.model("ExerciseRecord");
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
 const ObjectId = mongoose.Types.ObjectId
@@ -177,13 +181,19 @@ const resolvers = {
         upsert: true
       });
       return UserModle.findOne({
-       _id
+        _id
       });
     },
-    createExercise:(parent, args, context) => {
-      const { createrAvatarUrl,createrId,course_id,courseName,teacherName,invitationCode} = args;
-      // 别问，问就是：代码越怪，运行越快；GrapQL不知道JSON.string前端的",模板字符串也没把“ " ”转义成 “ \" ”，只能这么怪搞
-      const realExerciseList = JSON.parse(args.exerciseList.replace(/\+z\&l\+/g,"\""));
+    createExercise: (parent, args, context) => {
+      const {
+        createrAvatarUrl,
+        createrId,
+        course_id,
+        courseName,
+        teacherName,
+        invitationCode
+      } = args;
+      const realExerciseList = zlDecodeList(args.exerciseList);
       return ExerciseModle.create({
         createrAvatarUrl,
         createrId,
@@ -191,16 +201,63 @@ const resolvers = {
         courseName,
         teacherName,
         invitationCode,
-        exerciseList:realExerciseList
+        exerciseList: realExerciseList
       })
     },
-    examIndex:async (parent, args, context) =>{
+    examIndex: async (parent, args, context) => {
       const queryList = args.invitationCodeList.map((item) => {
-        return { invitationCode:item }
+        return {
+          invitationCode: item
+        }
       })
-      const realRes =await ExerciseModle.find({$or:queryList})
+      const realRes = await ExerciseModle.find({
+        $or: queryList
+      })
       return realRes
-    }
+    },
+    getExam: async (parent, args, context) => {
+      const {
+        id
+      } = args
+      const res = await ExerciseModle.findOne({
+        _id: ObjectId(id)
+      })
+
+      return res;
+    },
+    submitExercise: async (parent, args, context) => {
+      const {
+        courseName,
+        course_id,
+        createrAvatarUrl,
+        createrId,
+        exerciseId,
+        exercisesCorrectRecord,
+        exercisesScoreRecord,
+        userInputKeyList,
+        userId
+      } = args;
+      let res;
+      ExerciseRecordModle.create({
+        courseName,
+        course_id,
+        createrAvatarUrl,
+        createrId,
+        exerciseId,
+        exercisesCorrectRecord:zlDecodeList(exercisesCorrectRecord),
+        exercisesScoreRecord,
+        userInputKeyList: zlDecodeList(userInputKeyList),
+        userId
+      }).then(
+        (_res) => {
+          console.log('_res: ', _res);
+          res = _res
+        }
+      ).catch(e => {
+        console.log(":eeee",e);
+      })
+      return res
+    },
   },
   Mutation: {
     setUser: (parent, args, context) => {
@@ -218,7 +275,6 @@ const resolvers = {
         gender,
         phone
       } = args.post;
-      console.log('args.post: ', args.post);
       if (isWxUser) {
         return UserModle.create({
           uname: nickName,
@@ -279,7 +335,7 @@ const resolvers = {
         invitationCode,
       });
     },
-   
+
   }
 };
 

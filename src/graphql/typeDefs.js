@@ -55,6 +55,9 @@ const typeDefs = gql `
     exerciseList:[Exercises]
     meta:meta
   }
+  type ExerciseRecord{
+    userId: String,
+  }
   type Course{
     _id:String,
     createrAvatarUrl: String,
@@ -81,10 +84,12 @@ const typeDefs = gql `
     checkuser(uname:String,openId:String):User
     queryCourse(createrId:String!):[Course]
     queryStudentCourse(_id:String!):[Course]
+    getExam(id:String):CreateExercisesList
     addCourse(invitationCode:String!,_id:String!):Course
     deleteCourse(userId:String!,userType:Int!,courseId:String!,invitationCode:String!):QueryResult
     updateUserInfomation(_id:String!, avatarUrl:String,realName:String,nickName:String,age:String grade:String,gender:String,phone:String,userType:Int):User
-    createExercise(createrAvatarUrl: String,createrId: String,course_id:String,courseName: String,teacherName: String,invitationCode: String,exerciseList:String):CreateExercisesList
+    createExercise(createrAvatarUrl: String!,createrId: String!,course_id:String,courseName: String,teacherName: String,invitationCode: String,exerciseList:String):CreateExercisesList
+    submitExercise(exerciseId:String!,courseName:String!,createrId:String!,createrAvatarUrl:String,userId:String,course_id:String,exercisesScoreRecord:Int,exercisesCorrectRecord:String,userInputKeyList:String):CreateExercisesList
   }
 
   type Mutation{
