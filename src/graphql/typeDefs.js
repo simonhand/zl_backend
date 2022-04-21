@@ -44,14 +44,19 @@ const typeDefs = gql `
     exercisesType:Int,
     exercisesIndex:String
   }
-  type CreateExercisesList{
+  type CreateExercisesListOrNotify{
     _id:String,
+    exerciseCount:Int,
+    NotifyCount:Int,
     createrAvatarUrl: String,
     createrId: String,
     course_id:String,
     courseName: String,
     teacherName: String,
     invitationCode: String,
+    imgList:String,  
+    readStudent:[String], 
+    textArea:String,
     exerciseList:[Exercises]
     meta:meta
   }
@@ -79,17 +84,20 @@ const typeDefs = gql `
 
   type Query {
     users:[User]
-    examIndex(invitationCodeList:[String]):[CreateExercisesList]
-    loginuser(uname:String,pwd:String):User
-    checkuser(uname:String,openId:String):User
+    examIndex(invitationCodeList:[String]!,userId:String!,from:String):[CreateExercisesListOrNotify]
+    loginuser(uname:String!,pwd:String!):User
+    checkuser(uname:String!,openId:String!):User
     queryCourse(createrId:String!):[Course]
     queryStudentCourse(_id:String!):[Course]
-    getExam(id:String):CreateExercisesList
+    getExam(id:String):CreateExercisesListOrNotify
     addCourse(invitationCode:String!,_id:String!):Course
     deleteCourse(userId:String!,userType:Int!,courseId:String!,invitationCode:String!):QueryResult
-    updateUserInfomation(_id:String!, avatarUrl:String,realName:String,nickName:String,age:String grade:String,gender:String,phone:String,userType:Int):User
-    createExercise(createrAvatarUrl: String!,createrId: String!,course_id:String,courseName: String,teacherName: String,invitationCode: String,exerciseList:String):CreateExercisesList
-    submitExercise(exerciseId:String!,courseName:String!,createrId:String!,createrAvatarUrl:String,userId:String,course_id:String,exercisesScoreRecord:Int,exercisesCorrectRecord:String,userInputKeyList:String):CreateExercisesList
+    updateUserInfomation(_id:String!, avatarUrl:String!,realName:String!,nickName:String!,age:String! ,grade:String!,gender:String!,phone:String!,userType:Int!):User
+    createExercise(createrAvatarUrl: String!,createrId: String!,course_id:String,courseName: String!,teacherName: String!,invitationCode: String!,exerciseList:String!):CreateExercisesListOrNotify
+    submitExercise(exerciseId:String!,courseName:String!,createrId:String!,createrAvatarUrl:String!,userId:String!,course_id:String!,exercisesScoreRecord:Int!,exercisesCorrectRecord:String!,userInputKeyList:String):CreateExercisesListOrNotify
+    createNotify(createrAvatarUrl: String!,createrId: String!,course_id:String!,courseName: String!,teacherName: String!,invitationCode: String!,textArea:String!,imgList:String!):CreateExercisesListOrNotify
+    getNotify(invitationCodeList:[String]!,userId:String!,from:String):[CreateExercisesListOrNotify]
+    readNotify(userId:String!,notifyId:String!):CreateExercisesListOrNotify
   }
 
   type Mutation{

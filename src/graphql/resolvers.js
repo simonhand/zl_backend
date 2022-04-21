@@ -1,11 +1,13 @@
 const {
-  zlDecodeList
+  zlDecodeList,
+  zlEncodeList
 } = require('../utils/utils')
 const mongoose = require('mongoose');
 const UserModle = mongoose.model('User');
 const CourseModle = mongoose.model('Course');
 const ExerciseModle = mongoose.model('Exercise');
 const ExerciseRecordModle = mongoose.model("ExerciseRecord");
+const NotifyModdle = mongoose.model("Notify");
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
 const ObjectId = mongoose.Types.ObjectId
@@ -211,8 +213,12 @@ const resolvers = {
         }
       })
       const realRes = await ExerciseModle.find({
-        $or: queryList
+        $or: queryList,
+        doneStudent: {$nin: [args.userId]}
       })
+      if (args.from === "index") {
+        return [{exerciseCount:realRes.length}]
+      }
       return realRes
     },
     getExam: async (parent, args, context) => {
@@ -238,26 +244,90 @@ const resolvers = {
         userId
       } = args;
       let res;
+      ExerciseModle.updateOne({
+        _id: exerciseId
+      }, {
+        $push: {
+          doneStudent: args.userId
+        }
+      }).then((res) => {
+        console.log(res);
+      })
       ExerciseRecordModle.create({
         courseName,
         course_id,
         createrAvatarUrl,
         createrId,
         exerciseId,
-        exercisesCorrectRecord:zlDecodeList(exercisesCorrectRecord),
+        exercisesCorrectRecord: zlDecodeList(exercisesCorrectRecord),
         exercisesScoreRecord,
         userInputKeyList: zlDecodeList(userInputKeyList),
         userId
       }).then(
         (_res) => {
-          console.log('_res: ', _res);
           res = _res
         }
       ).catch(e => {
-        console.log(":eeee",e);
+        console.log(":eeee", e);
       })
       return res
     },
+    createNotify: async (parent,args,context) => {
+      const {
+        createrAvatarUrl,
+        createrId,
+        course_id,
+        courseName,
+        teacherName,
+        invitationCode,
+        textArea
+      } = args;
+      const realimgList = zlDecodeList(args.imgList);
+      return NotifyModdle.create({
+        createrAvatarUrl,
+        createrId,
+        course_id,
+        courseName,
+        teacherName,
+        invitationCode,
+        textArea,
+        imgList: realimgList
+      })
+    },
+    getNotify:async (_,args) => {
+      const queryList = args.invitationCodeList.map((item) => {
+        return {
+          invitationCode: item
+        }
+      })
+      const res = await NotifyModdle.find({
+        $or: queryList,
+        readStudent: {$nin: [args.userId]}
+      })
+      if (args.from === "index") {
+        return [{NotifyCount:res.length}]
+      }
+      const newRes = res.map((item,index) =>{
+        return {...item._doc,imgList:zlEncodeList(item.imgList)}
+      })
+      return newRes
+    },
+    readNotify:async (_,args) => {
+      const {
+        notifyId,
+        userId
+      } = args;
+      NotifyModdle.updateOne({
+        _id: notifyId
+      }, {
+        $push: {
+          readStudent: userId
+        }
+      }).then((res) => {
+        console.log(res);
+      })
+      return {_id:notifyId}
+    }
   },
   Mutation: {
     setUser: (parent, args, context) => {

@@ -3,6 +3,7 @@ require("./schema/user");
 require("./schema/course");
 require("./schema/exercise")
 require("./schema/exerciseRecord")
+require("./schema/notify")
 main().catch(err => console.log("err+zhangle", err));
 
 async function main() {

@@ -3,15 +3,16 @@ const {
   Schema
 } = mongoose;
 
-const ExerciseSchema = new Schema({
+const NotifySchema = new Schema({
   createrAvatarUrl: String,
   createrId: String,
   course_id:String,
   courseName: String,
   teacherName: String,
   invitationCode: String,
-  exerciseList:[Object],
-  doneStudent:[String], // 这里存在做完测试的学生id
+  textArea:String,
+  imgList:[String],
+  readStudent:[String], // 这里已读消息的学生id
   meta: {
     createdAt: {
       type: Date,
@@ -24,7 +25,7 @@ const ExerciseSchema = new Schema({
   }
 });
 
-ExerciseSchema.pre('save', function (next) {
+NotifySchema.pre('save', function (next) {
   if (this.isNew) {
     this.meta.createdAt = this.meta.updateAt = Date.now();
   } {
@@ -34,4 +35,4 @@ ExerciseSchema.pre('save', function (next) {
 });
 
 
-mongoose.model("Exercise", ExerciseSchema);
+mongoose.model("Notify", NotifySchema);
