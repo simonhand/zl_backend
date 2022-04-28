@@ -60,8 +60,23 @@ const typeDefs = gql `
     exerciseList:[Exercises]
     meta:meta
   }
-  type ExerciseRecord{
+  type ExerciseOrNotifyRecord{
+    _id:String,
     userId: String,
+    createrId:String
+    createrAvatarUrl:String
+    courseName:String
+    exerciseId:String
+    exercisesCorrectRecord:[Boolean]
+    exercisesScoreRecord:Int
+  }
+  type Calc{
+    calcList:String,
+    score:Int,
+    calcCount:Int,
+    timer:String,
+    userId:String,
+    calcType:String
   }
   type Course{
     _id:String,
@@ -81,7 +96,11 @@ const typeDefs = gql `
     upsertedCount: Int,
     matchedCount: Int
   }
-
+  type TabTotal{
+    exerciseCount:Int,
+    notifyCount:Int,
+    calcCount:Int
+  }
   type Query {
     users:[User]
     examIndex(invitationCodeList:[String]!,userId:String!,from:String):[CreateExercisesListOrNotify]
@@ -98,6 +117,10 @@ const typeDefs = gql `
     createNotify(createrAvatarUrl: String!,createrId: String!,course_id:String!,courseName: String!,teacherName: String!,invitationCode: String!,textArea:String!,imgList:String!):CreateExercisesListOrNotify
     getNotify(invitationCodeList:[String]!,userId:String!,from:String):[CreateExercisesListOrNotify]
     readNotify(userId:String!,notifyId:String!):CreateExercisesListOrNotify
+    submitCalc(calcList:String!,score:Int!,calcCount:Int!,timer:String!,userId:String!,calcType:String!):Calc
+    getTabTotal(userId:String!):TabTotal
+    getExerciseRecord(userId:String!):[ExerciseOrNotifyRecord]
+    getCalcRecord(userId:String!):[Calc]
   }
 
   type Mutation{

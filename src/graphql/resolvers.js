@@ -8,6 +8,7 @@ const CourseModle = mongoose.model('Course');
 const ExerciseModle = mongoose.model('Exercise');
 const ExerciseRecordModle = mongoose.model("ExerciseRecord");
 const NotifyModdle = mongoose.model("Notify");
+const CalcModdle = mongoose.model("Calc");
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
 const ObjectId = mongoose.Types.ObjectId
@@ -300,10 +301,18 @@ const resolvers = {
           invitationCode: item
         }
       })
-      const res = await NotifyModdle.find({
-        $or: queryList,
-        readStudent: {$nin: [args.userId]}
-      })
+      let res
+      if (args.from === "record") {
+        res= await NotifyModdle.find({
+          $or: queryList,
+          readStudent: {$in: [args.userId]}
+        })
+      } else{
+        res= await NotifyModdle.find({
+          $or: queryList,
+          readStudent: {$nin: [args.userId]}
+        })
+      }
       if (args.from === "index") {
         return [{NotifyCount:res.length}]
       }
@@ -327,6 +336,54 @@ const resolvers = {
         console.log(res);
       })
       return {_id:notifyId}
+    },
+    submitCalc(_,args){
+      const  {
+        calcList,
+        score,
+        calcCount,
+        timer,
+        userId,
+        calcType
+    } = args
+    const realcalcList = zlDecodeList(calcList)
+    const realTimer = zlDecodeList(timer)
+    CalcModdle.create({
+      calcList:realcalcList,
+      timer:realTimer,
+      score,
+      calcType,
+      calcCount,
+      userId
+    })
+    return {userId}
+    },
+    getTabTotal:async (_,args) => {
+      const {userId} = args
+      console.log('userId: ', userId);
+      const exerciseCount = await ExerciseRecordModle.find({
+        userId
+      }).count(true)
+      const notifyCount = await NotifyModdle.find({userId}).count();
+      const calcCount = await CalcModdle.find({userId}).count();
+      return { exerciseCount,notifyCount,calcCount}
+    },
+    getExerciseRecord:async (_,args) => {
+      const { userId } = args
+      const res = await ExerciseRecordModle.find({
+        userId
+      })
+      return res
+    },
+    getCalcRecord:async (_,args) => {
+      const { userId } = args
+      const res = await CalcModdle.find({
+        userId
+      })
+      const realRes = res.map((item) => {
+        return {...item._doc,calcList:zlEncodeList(item.calcList),timer:zlEncodeList(item.timer)};
+      })
+      return realRes
     }
   },
   Mutation: {

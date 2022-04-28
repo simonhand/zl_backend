@@ -4,6 +4,7 @@ require("./schema/course");
 require("./schema/exercise")
 require("./schema/exerciseRecord")
 require("./schema/notify")
+require("./schema/calc")
 main().catch(err => console.log("err+zhangle", err));
 
 async function main() {
