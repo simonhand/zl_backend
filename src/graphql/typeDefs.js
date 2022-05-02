@@ -56,8 +56,10 @@ const typeDefs = gql `
     invitationCode: String,
     imgList:String,  
     readStudent:[String], 
+    userInputKeyList:String,
     textArea:String,
     exerciseList:[Exercises]
+    exercisesCorrectRecord:[Boolean]
     meta:meta
   }
   type ExerciseOrNotifyRecord{
@@ -71,6 +73,7 @@ const typeDefs = gql `
     exercisesScoreRecord:Int
   }
   type Calc{
+    _id:String,
     calcList:String,
     score:Int,
     calcCount:Int,
@@ -108,19 +111,20 @@ const typeDefs = gql `
     checkuser(uname:String!,openId:String!):User
     queryCourse(createrId:String!):[Course]
     queryStudentCourse(_id:String!):[Course]
-    getExam(id:String):CreateExercisesListOrNotify
+    getExam(id:String!,from:String):CreateExercisesListOrNotify
     addCourse(invitationCode:String!,_id:String!):Course
     deleteCourse(userId:String!,userType:Int!,courseId:String!,invitationCode:String!):QueryResult
     updateUserInfomation(_id:String!, avatarUrl:String!,realName:String!,nickName:String!,age:String! ,grade:String!,gender:String!,phone:String!,userType:Int!):User
     createExercise(createrAvatarUrl: String!,createrId: String!,course_id:String,courseName: String!,teacherName: String!,invitationCode: String!,exerciseList:String!):CreateExercisesListOrNotify
     submitExercise(exerciseId:String!,courseName:String!,createrId:String!,createrAvatarUrl:String!,userId:String!,course_id:String!,exercisesScoreRecord:Int!,exercisesCorrectRecord:String!,userInputKeyList:String):CreateExercisesListOrNotify
     createNotify(createrAvatarUrl: String!,createrId: String!,course_id:String!,courseName: String!,teacherName: String!,invitationCode: String!,textArea:String!,imgList:String!):CreateExercisesListOrNotify
-    getNotify(invitationCodeList:[String]!,userId:String!,from:String):[CreateExercisesListOrNotify]
+    getNotify(invitationCodeList:[String]!,userId:String!,from:String,skip:Int):[CreateExercisesListOrNotify]
     readNotify(userId:String!,notifyId:String!):CreateExercisesListOrNotify
     submitCalc(calcList:String!,score:Int!,calcCount:Int!,timer:String!,userId:String!,calcType:String!):Calc
     getTabTotal(userId:String!):TabTotal
-    getExerciseRecord(userId:String!):[ExerciseOrNotifyRecord]
-    getCalcRecord(userId:String!):[Calc]
+    getExerciseRecord(userId:String!,skip:Int):[ExerciseOrNotifyRecord]
+    getCalcRecord(userId:String!,skip:Int):[Calc]
+    deleteCalcRecord(calcId:String!):Calc
   }
 
   type Mutation{
