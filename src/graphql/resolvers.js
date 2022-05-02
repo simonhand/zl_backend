@@ -215,22 +215,45 @@ const resolvers = {
       })
       const realRes = await ExerciseModle.find({
         $or: queryList,
-        doneStudent: {$nin: [args.userId]}
+        doneStudent: {
+          $nin: [args.userId]
+        }
       })
       if (args.from === "index") {
-        return [{exerciseCount:realRes.length}]
+        return [{
+          exerciseCount: realRes.length
+        }]
       }
       return realRes
     },
     getExam: async (parent, args, context) => {
       const {
-        id
+        id,
+        from
       } = args
-      const res = await ExerciseModle.findOne({
-        _id: ObjectId(id)
-      })
-
+      console.log('args: ', args);
+      let res
+      if (from === 'record') {
+        const res1 = await ExerciseModle.findOne({
+          _id: ObjectId(id)
+        })
+        const res2 = await ExerciseRecordModle.findOne({
+          exerciseId: id
+        })
+        res2.userInputKeyList
+        res = {
+          exerciseList: res1.exerciseList,
+          ...res2._doc,
+          userInputKeyList:zlEncodeList(res2._doc.userInputKeyList)
+        }
+      } else {
+        res = await ExerciseModle.findOne({
+          _id: ObjectId(id)
+        })
+      }
+      console.log('res: ', res);
       return res;
+      
     },
     submitExercise: async (parent, args, context) => {
       const {
@@ -273,7 +296,7 @@ const resolvers = {
       })
       return res
     },
-    createNotify: async (parent,args,context) => {
+    createNotify: async (parent, args, context) => {
       const {
         createrAvatarUrl,
         createrId,
@@ -295,7 +318,7 @@ const resolvers = {
         imgList: realimgList
       })
     },
-    getNotify:async (_,args) => {
+    getNotify: async (_, args) => {
       const queryList = args.invitationCodeList.map((item) => {
         return {
           invitationCode: item
@@ -303,25 +326,34 @@ const resolvers = {
       })
       let res
       if (args.from === "record") {
-        res= await NotifyModdle.find({
+        res = await NotifyModdle.find({
           $or: queryList,
-          readStudent: {$in: [args.userId]}
-        })
-      } else{
-        res= await NotifyModdle.find({
+          readStudent: {
+            $in: [args.userId]
+          }
+        }).sort([['_id',-1]]).skip(args.skip).limit(6)
+      } else {
+        res = await NotifyModdle.find({
           $or: queryList,
-          readStudent: {$nin: [args.userId]}
-        })
+          readStudent: {
+            $nin: [args.userId]
+          }
+        }).sort([['_id',-1]])
       }
       if (args.from === "index") {
-        return [{NotifyCount:res.length}]
+        return [{
+          NotifyCount: res.length
+        }]
       }
-      const newRes = res.map((item,index) =>{
-        return {...item._doc,imgList:zlEncodeList(item.imgList)}
+      const newRes = res.map((item, index) => {
+        return {
+          ...item._doc,
+          imgList: zlEncodeList(item.imgList)
+        }
       })
       return newRes
     },
-    readNotify:async (_,args) => {
+    readNotify: async (_, args) => {
       const {
         notifyId,
         userId
@@ -335,55 +367,89 @@ const resolvers = {
       }).then((res) => {
         console.log(res);
       })
-      return {_id:notifyId}
+      return {
+        _id: notifyId
+      }
     },
-    submitCalc(_,args){
-      const  {
+    submitCalc(_, args) {
+      const {
         calcList,
         score,
         calcCount,
         timer,
         userId,
         calcType
-    } = args
-    const realcalcList = zlDecodeList(calcList)
-    const realTimer = zlDecodeList(timer)
-    CalcModdle.create({
-      calcList:realcalcList,
-      timer:realTimer,
-      score,
-      calcType,
-      calcCount,
-      userId
-    })
-    return {userId}
+      } = args
+      const realcalcList = zlDecodeList(calcList)
+      const realTimer = zlDecodeList(timer)
+      CalcModdle.create({
+        calcList: realcalcList,
+        timer: realTimer,
+        score,
+        calcType,
+        calcCount,
+        userId
+      })
+      return {
+        userId
+      }
     },
-    getTabTotal:async (_,args) => {
-      const {userId} = args
+    getTabTotal: async (_, args) => {
+      const {
+        userId
+      } = args
       console.log('userId: ', userId);
       const exerciseCount = await ExerciseRecordModle.find({
         userId
       }).count(true)
-      const notifyCount = await NotifyModdle.find({userId}).count();
-      const calcCount = await CalcModdle.find({userId}).count();
-      return { exerciseCount,notifyCount,calcCount}
+      const notifyCount = await NotifyModdle.find({
+        readStudent: {
+          $in: [args.userId]
+        }
+      }).count();
+      const calcCount = await CalcModdle.find({
+        userId
+      }).count();
+      return {
+        exerciseCount,
+        notifyCount,
+        calcCount
+      }
     },
-    getExerciseRecord:async (_,args) => {
-      const { userId } = args
+    getExerciseRecord: async (_, args) => {
+      const {
+        userId,
+        skip
+      } = args
+      console.log('_skip: ', skip);
       const res = await ExerciseRecordModle.find({
         userId
-      })
+      }).sort([['_id',-1]]).skip(skip).limit(6)
+      console.log('res: ', res);
       return res
     },
-    getCalcRecord:async (_,args) => {
-      const { userId } = args
+    getCalcRecord: async (_, args) => {
+      const {
+        userId,
+        skip
+      } = args
       const res = await CalcModdle.find({
         userId
-      })
+      }).sort([['_id',-1]]).skip(skip).limit(6)
       const realRes = res.map((item) => {
-        return {...item._doc,calcList:zlEncodeList(item.calcList),timer:zlEncodeList(item.timer)};
+        return {
+          ...item._doc,
+          calcList: zlEncodeList(item.calcList),
+          timer: zlEncodeList(item.timer)
+        };
       })
       return realRes
+    },
+    deleteCalcRecord:async (_,args) => {
+      await CalcModdle.deleteOne({
+        _id:args.calcId
+      })
+      return {_id:args.calcId}
     }
   },
   Mutation: {
