@@ -42,7 +42,8 @@ async function startApolloServer(app, typeDefs, resolvers) {
   });
   httpServer.on('request', app.callback());
   await new Promise(resolve => httpServer.listen({
-    url: "192.168.0.3",
+    url:"192.168.9.73",
+    // url: "192.168.0.3",
     // url: "192.168.1.103",
     port: 3000
   }, resolve));

@@ -194,6 +194,7 @@ const resolvers = {
         course_id,
         courseName,
         teacherName,
+        exerciseName,
         invitationCode
       } = args;
       const realExerciseList = zlDecodeList(args.exerciseList);
@@ -203,6 +204,7 @@ const resolvers = {
         course_id,
         courseName,
         teacherName,
+        exerciseName,
         invitationCode,
         exerciseList: realExerciseList
       })
@@ -244,7 +246,7 @@ const resolvers = {
         res = {
           exerciseList: res1.exerciseList,
           ...res2._doc,
-          userInputKeyList:zlEncodeList(res2._doc.userInputKeyList)
+          userInputKeyList: zlEncodeList(res2._doc.userInputKeyList)
         }
       } else {
         res = await ExerciseModle.findOne({
@@ -253,7 +255,7 @@ const resolvers = {
       }
       console.log('res: ', res);
       return res;
-      
+
     },
     submitExercise: async (parent, args, context) => {
       const {
@@ -261,6 +263,7 @@ const resolvers = {
         course_id,
         createrAvatarUrl,
         createrId,
+        exerciseName,
         exerciseId,
         exercisesCorrectRecord,
         exercisesScoreRecord,
@@ -283,6 +286,7 @@ const resolvers = {
         createrAvatarUrl,
         createrId,
         exerciseId,
+        exerciseName,
         exercisesCorrectRecord: zlDecodeList(exercisesCorrectRecord),
         exercisesScoreRecord,
         userInputKeyList: zlDecodeList(userInputKeyList),
@@ -326,19 +330,32 @@ const resolvers = {
       })
       let res
       if (args.from === "record") {
-        res = await NotifyModdle.find({
-          $or: queryList,
-          readStudent: {
-            $in: [args.userId]
-          }
-        }).sort([['_id',-1]]).skip(args.skip).limit(6)
+        // 学生
+        if (args.userType) {
+          res = await NotifyModdle.find({
+            $or: queryList,
+            readStudent: {
+              $in: [args.userId]
+            }
+          }).sort([
+            ['_id', -1]
+          ]).skip(args.skip).limit(6)
+        } else {
+          res = await NotifyModdle.find({
+            createrId: args.userId
+          }).sort([
+            ['_id', -1]
+          ]).skip(args.skip).limit(6)
+        }
       } else {
         res = await NotifyModdle.find({
           $or: queryList,
           readStudent: {
             $nin: [args.userId]
           }
-        }).sort([['_id',-1]])
+        }).sort([
+          ['_id', -1]
+        ])
       }
       if (args.from === "index") {
         return [{
@@ -396,17 +413,29 @@ const resolvers = {
     },
     getTabTotal: async (_, args) => {
       const {
-        userId
-      } = args
-      console.log('userId: ', userId);
-      const exerciseCount = await ExerciseRecordModle.find({
-        userId
-      }).count(true)
-      const notifyCount = await NotifyModdle.find({
-        readStudent: {
-          $in: [args.userId]
-        }
-      }).count();
+        userId,
+        userType
+      } = args;
+      let exerciseCount;
+      let notifyCount;
+      // 学生
+      if (userType) {
+        exerciseCount = await ExerciseRecordModle.find({
+          userId
+        }).count(true);
+        notifyCount = await NotifyModdle.find({
+          readStudent: {
+            $in: [args.userId]
+          }
+        }).count();
+      } else {
+        exerciseCount = await ExerciseModle.find({
+          createrId: userId
+        }).count(true);
+        notifyCount = await NotifyModdle.find({
+          createrId: userId
+        }).count();
+      }
       const calcCount = await CalcModdle.find({
         userId
       }).count();
@@ -419,13 +448,23 @@ const resolvers = {
     getExerciseRecord: async (_, args) => {
       const {
         userId,
-        skip
+        skip,
+        userType
       } = args
-      console.log('_skip: ', skip);
-      const res = await ExerciseRecordModle.find({
-        userId
-      }).sort([['_id',-1]]).skip(skip).limit(6)
-      console.log('res: ', res);
+      let res;
+      if (userType) {
+        res = await ExerciseRecordModle.find({
+          userId
+        }).sort([
+          ['_id', -1]
+        ]).skip(skip).limit(6)
+      }else{
+        res = await ExerciseModle.find({
+          createrId: userId
+        }).sort([
+          ['_id', -1]
+        ]).skip(skip).limit(6)
+      }
       return res
     },
     getCalcRecord: async (_, args) => {
@@ -435,7 +474,9 @@ const resolvers = {
       } = args
       const res = await CalcModdle.find({
         userId
-      }).sort([['_id',-1]]).skip(skip).limit(6)
+      }).sort([
+        ['_id', -1]
+      ]).skip(skip).limit(6)
       const realRes = res.map((item) => {
         return {
           ...item._doc,
@@ -445,11 +486,13 @@ const resolvers = {
       })
       return realRes
     },
-    deleteCalcRecord:async (_,args) => {
+    deleteCalcRecord: async (_, args) => {
       await CalcModdle.deleteOne({
-        _id:args.calcId
+        _id: args.calcId
       })
-      return {_id:args.calcId}
+      return {
+        _id: args.calcId
+      }
     }
   },
   Mutation: {

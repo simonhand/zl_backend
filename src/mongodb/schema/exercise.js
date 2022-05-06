@@ -10,6 +10,7 @@ const ExerciseSchema = new Schema({
   courseName: String,
   teacherName: String,
   invitationCode: String,
+  exerciseName:String,
   exerciseList:[Object],
   doneStudent:[String], // 这里存在做完测试的学生id
   meta: {
