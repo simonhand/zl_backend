@@ -10,6 +10,7 @@ const exerciseRecordSchema = new Schema({
   userId: String,
   course_id:String,
   exerciseId:String,
+  exerciseName:String,
   exercisesScoreRecord: Number,
   exercisesCorrectRecord:[Boolean],
   userInputKeyList: [Object],

@@ -46,6 +46,7 @@ const typeDefs = gql `
   }
   type CreateExercisesListOrNotify{
     _id:String,
+    exerciseName:String,
     exerciseCount:Int,
     NotifyCount:Int,
     createrAvatarUrl: String,
@@ -64,6 +65,7 @@ const typeDefs = gql `
   }
   type ExerciseOrNotifyRecord{
     _id:String,
+    exerciseName:String,
     userId: String,
     createrId:String
     createrAvatarUrl:String
@@ -71,6 +73,7 @@ const typeDefs = gql `
     exerciseId:String
     exercisesCorrectRecord:[Boolean]
     exercisesScoreRecord:Int
+    meta:meta
   }
   type Calc{
     _id:String,
@@ -115,14 +118,14 @@ const typeDefs = gql `
     addCourse(invitationCode:String!,_id:String!):Course
     deleteCourse(userId:String!,userType:Int!,courseId:String!,invitationCode:String!):QueryResult
     updateUserInfomation(_id:String!, avatarUrl:String!,realName:String!,nickName:String!,age:String! ,grade:String!,gender:String!,phone:String!,userType:Int!):User
-    createExercise(createrAvatarUrl: String!,createrId: String!,course_id:String,courseName: String!,teacherName: String!,invitationCode: String!,exerciseList:String!):CreateExercisesListOrNotify
-    submitExercise(exerciseId:String!,courseName:String!,createrId:String!,createrAvatarUrl:String!,userId:String!,course_id:String!,exercisesScoreRecord:Int!,exercisesCorrectRecord:String!,userInputKeyList:String):CreateExercisesListOrNotify
+    createExercise(createrAvatarUrl: String!,createrId: String!,course_id:String,courseName: String!,teacherName: String!,invitationCode: String!,exerciseList:String!,exerciseName:String):CreateExercisesListOrNotify
+    submitExercise(exerciseId:String!,courseName:String!,createrId:String!,createrAvatarUrl:String!,userId:String!,course_id:String!,exercisesScoreRecord:Int!,exercisesCorrectRecord:String!,userInputKeyList:String,exerciseName:String):CreateExercisesListOrNotify
     createNotify(createrAvatarUrl: String!,createrId: String!,course_id:String!,courseName: String!,teacherName: String!,invitationCode: String!,textArea:String!,imgList:String!):CreateExercisesListOrNotify
-    getNotify(invitationCodeList:[String]!,userId:String!,from:String,skip:Int):[CreateExercisesListOrNotify]
+    getNotify(invitationCodeList:[String]!,userId:String!,from:String,skip:Int,userType:Int):[CreateExercisesListOrNotify]
     readNotify(userId:String!,notifyId:String!):CreateExercisesListOrNotify
     submitCalc(calcList:String!,score:Int!,calcCount:Int!,timer:String!,userId:String!,calcType:String!):Calc
-    getTabTotal(userId:String!):TabTotal
-    getExerciseRecord(userId:String!,skip:Int):[ExerciseOrNotifyRecord]
+    getTabTotal(userId:String!,userType:Int):TabTotal
+    getExerciseRecord(userId:String!,skip:Int,userType:Int):[ExerciseOrNotifyRecord]
     getCalcRecord(userId:String!,skip:Int):[Calc]
     deleteCalcRecord(calcId:String!):Calc
   }
