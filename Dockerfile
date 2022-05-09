@@ -19,7 +19,7 @@ COPY . /app
 # RUN yarn install
 RUN npm install
 RUN npm run build
-RUN rm -rf !(app.js|node_modules)
+RUN rm -rf !(app.js | node_modules)
 #ENV PORT=4403 NODE_ENV=pro
 # 该镜像生产的容器内的端口号，相当于后续docker run -p 8827: 9930的9930
 EXPOSE 3636
