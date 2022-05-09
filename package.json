@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "supervisor app.js",
+    "start": "supervisor service.js",
     "build": "webpack --progress --hide-modules --config webpack.config.js",
     "dev": "node ./src/app.js"
   },
