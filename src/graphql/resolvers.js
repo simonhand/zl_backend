@@ -458,7 +458,7 @@ const resolvers = {
         }).sort([
           ['_id', -1]
         ]).skip(skip).limit(6)
-      }else{
+      } else {
         res = await ExerciseModle.find({
           createrId: userId
         }).sort([
@@ -493,6 +493,39 @@ const resolvers = {
       return {
         _id: args.calcId
       }
+    },
+    getDoneExerciseStudents: async (_, args) => {
+      const {
+        exerciseRecordId
+      } = args;
+      console.log('args: ', args);
+
+      const res1 = await ExerciseRecordModle.find({
+        exerciseId: exerciseRecordId,
+      })
+      const realRes = [];
+      for (const item of res1) {
+        realRes.push(await UserModle.findOne({
+          _id: ObjectId(item.userId)
+        }))
+      }
+      console.log(realRes);
+      return realRes
+    },
+    getReadNotifyStudents: async (_, args) => {
+      const {
+        notifyId
+      } = args
+      console.log(args);
+      const res1 = await NotifyModdle.findOne({
+        _id:ObjectId(notifyId)
+      })
+      const realRes = []
+      for (const item of res1.readStudent) {
+        console.log('item: ', item);
+        realRes.push(await UserModle.findOne({_id:ObjectId(item)}))
+      }
+      return realRes
     }
   },
   Mutation: {

@@ -68,6 +68,7 @@ const typeDefs = gql `
     exerciseName:String,
     userId: String,
     createrId:String
+    course_id:String
     createrAvatarUrl:String
     courseName:String
     exerciseId:String
@@ -128,6 +129,8 @@ const typeDefs = gql `
     getExerciseRecord(userId:String!,skip:Int,userType:Int):[ExerciseOrNotifyRecord]
     getCalcRecord(userId:String!,skip:Int):[Calc]
     deleteCalcRecord(calcId:String!):Calc
+    getDoneExerciseStudents(course_id:String!,exerciseRecordId:String!):[User]
+    getReadNotifyStudents(notifyId:String!):[User]
   }
 
   type Mutation{

@@ -42,9 +42,9 @@ async function startApolloServer(app, typeDefs, resolvers) {
   });
   httpServer.on('request', app.callback());
   await new Promise(resolve => httpServer.listen({
-    url:"43.138.63.218",
+    // url:"43.138.63.218",
     // url: "192.168.0.3",
-    // url: "192.168.1.103",
+    url: "192.168.1.100",
     port: 3636
   }, resolve));
   console.log(`🚀 Server ready at http://localhost:3000${server.graphqlPath}`);
