@@ -11,6 +11,6 @@ main().then((res) => {
 
 async function main() {
   console.log("连接远程数据库");
-  // await mongoose.connect('mongodb://43.138.63.218:27018/zldb');
-  await mongoose.connect('mongodb://127.0.0.1:27017/zldb');
+  await mongoose.connect('mongodb://43.138.63.218:27018/zldb');
+  // await mongoose.connect('mongodb://127.0.0.1:27017/zldb');
 }

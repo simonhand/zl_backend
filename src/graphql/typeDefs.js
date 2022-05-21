@@ -36,6 +36,9 @@ const typeDefs = gql `
     keyValue:String
     trueKey:Boolean
   }
+  type Openid {
+    openid:String
+  }
   type Exercises{
     iscorrectExerciseType:Boolean,
     textArea:String,
@@ -108,6 +111,7 @@ const typeDefs = gql `
     notifyCount:Int,
     calcCount:Int
   }
+  
   type Query {
     users:[User]
     examIndex(invitationCodeList:[String]!,userId:String!,from:String):[CreateExercisesListOrNotify]
@@ -131,6 +135,7 @@ const typeDefs = gql `
     deleteCalcRecord(calcId:String!):Calc
     getDoneExerciseStudents(course_id:String!,exerciseRecordId:String!):[User]
     getReadNotifyStudents(notifyId:String!):[User]
+    getOpenId(appid:String!,secret:String!,code:String!):Openid
   }
 
   type Mutation{

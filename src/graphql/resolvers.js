@@ -1,8 +1,10 @@
 const {
   zlDecodeList,
   zlEncodeList
-} = require('../utils/utils')
+} = require('../utils/utils');
 const mongoose = require('mongoose');
+const request = require('request');
+const e = require('express');
 const UserModle = mongoose.model('User');
 const CourseModle = mongoose.model('Course');
 const ExerciseModle = mongoose.model('Exercise');
@@ -518,14 +520,29 @@ const resolvers = {
       } = args
       console.log(args);
       const res1 = await NotifyModdle.findOne({
-        _id:ObjectId(notifyId)
+        _id: ObjectId(notifyId)
       })
       const realRes = []
       for (const item of res1.readStudent) {
         console.log('item: ', item);
-        realRes.push(await UserModle.findOne({_id:ObjectId(item)}))
+        realRes.push(await UserModle.findOne({
+          _id: ObjectId(item)
+        }))
       }
       return realRes
+    },
+    getOpenId: async (_, args) => {
+      // const realRes = await request(`https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&js_code=${code}&secret=${secret}`, function (error, response, body) {
+      //   console.log('body: ', typeof body);
+      //   res = JSON.parse(body)
+      //   console.log('res1: ', res);
+      //   return res
+      // })
+      const res = await getOpenIdPro(args);
+      console.log('res: ', res);
+      return {
+        openid: JSON.parse(res).openid
+      }
     }
   },
   Mutation: {
@@ -607,5 +624,14 @@ const resolvers = {
 
   }
 };
+
+const getOpenIdPro = ({appid,code,secret}) => {
+  return new Promise((resolve, reject) => {
+    request(`https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&js_code=${code}&secret=${secret}`, function (error, response, body) {
+      resolve(body)
+      reject(error)
+    })
+  })
+}
 
 module.exports = resolvers;
