@@ -4,13 +4,14 @@ const {
 } = require('../utils/utils');
 const mongoose = require('mongoose');
 const request = require('request');
-const e = require('express');
 const UserModle = mongoose.model('User');
 const CourseModle = mongoose.model('Course');
 const ExerciseModle = mongoose.model('Exercise');
 const ExerciseRecordModle = mongoose.model("ExerciseRecord");
 const NotifyModdle = mongoose.model("Notify");
 const CalcModdle = mongoose.model("Calc");
+
+const { appScret } = require('../config/sercret')
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
 const ObjectId = mongoose.Types.ObjectId
@@ -532,17 +533,15 @@ const resolvers = {
       return realRes
     },
     getOpenId: async (_, args) => {
-      // const realRes = await request(`https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&js_code=${code}&secret=${secret}`, function (error, response, body) {
-      //   console.log('body: ', typeof body);
-      //   res = JSON.parse(body)
-      //   console.log('res1: ', res);
-      //   return res
-      // })
       const res = await getOpenIdPro(args);
-      console.log('res: ', res);
       return {
         openid: JSON.parse(res).openid
       }
+    },
+    getOcrString:async (_,args) => {
+      const res = await getOcrStr(args.imgUrl);
+      console.log('res: ', res);
+      return { ocrStr:res}
     }
   },
   Mutation: {
@@ -625,11 +624,23 @@ const resolvers = {
   }
 };
 
-const getOpenIdPro = ({appid,code,secret}) => {
+const getOpenIdPro = ({code}) => {
   return new Promise((resolve, reject) => {
-    request(`https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&js_code=${code}&secret=${secret}`, function (error, response, body) {
+    request(`https://api.weixin.qq.com/sns/jscode2session?appid=${appScret.appid}&js_code=${code}&secret=${appScret.secret}`, function (error, response, body) {
       resolve(body)
       reject(error)
+    })
+  })
+}
+
+const getOcrStr = (url) => {
+  const { appid,secret} = appScret
+  return new Promise((resolve, reject) => {
+    request(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appid}&secret=${secret}`, function (error, response, body) {
+      request({url:`https://api.weixin.qq.com/cv/ocr/comm?img_url=${url}&access_token=${JSON.parse(body).access_token}`,method:"POST"},function (e,_,body) {
+        resolve(body)
+        reject(e)
+      })
     })
   })
 }
