@@ -111,6 +111,9 @@ const typeDefs = gql `
     notifyCount:Int,
     calcCount:Int
   }
+  type OcrRes{
+    ocrStr:String
+  }
   
   type Query {
     users:[User]
@@ -135,7 +138,8 @@ const typeDefs = gql `
     deleteCalcRecord(calcId:String!):Calc
     getDoneExerciseStudents(course_id:String!,exerciseRecordId:String!):[User]
     getReadNotifyStudents(notifyId:String!):[User]
-    getOpenId(appid:String!,secret:String!,code:String!):Openid
+    getOpenId(code:String!):Openid
+    getOcrString(imgUrl:String!):OcrRes
   }
 
   type Mutation{
